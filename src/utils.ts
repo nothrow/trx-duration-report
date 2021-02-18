@@ -128,13 +128,28 @@ function getReportHeaders(
   return {reportName, reportTitle}
 }
 
+export function makeArray<T>(items : T | Array<T>) : Array<T>
+{
+  if (Array.isArray(items))
+    return items;
+
+  return [items];
+}
+
+export function getConfigValue(id: string) : string {
+  const coreValue = core.getInput(id);
+  if (!coreValue || coreValue === '') {
+    return process.env[id] ?? coreValue;
+  }
+
+  return coreValue;
+}
+
 function getAssemblyName(unittests: UnitTest[]): string {
   if (Array.isArray(unittests)) {
-    core.info('Its an array')
     return unittests[0]._storage
   } else {
     const ut = unittests as UnitTest
-    core.info(`Its not an array: ${ut._storage}`)
     return ut._storage
   }
 }
