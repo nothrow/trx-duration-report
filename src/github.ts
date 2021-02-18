@@ -31,7 +31,7 @@ export async function createCheckRun(
     const response = await octokit.checks.create({
       owner: github.context.repo.owner,
       repo: github.context.repo.repo,
-      name: "trx-duration-report",
+      name: 'trx-duration-report',
       head_sha: git_sha,
       status: 'completed',
       conclusion: 'neutral',
