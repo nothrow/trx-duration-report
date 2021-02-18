@@ -10,9 +10,7 @@
     "format-check": "prettier --check **/*.ts",
     "lint": "eslint src/**/*.ts",
     "lint-fix": "eslint --fix src/**/*.ts",
-    "package": "ncc build --source-map --license licenses.txt",
-    "watch": "tsc --watch",
-    "all": "npm run build && npm run format && npm run lint && npm run package && npm test"
+    "watch": "tsc --watch"
   },
   "repository": {
     "type": "git",
@@ -26,7 +24,6 @@
   "license": "MIT",
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged",
       "pre-push": "./scripts/pre-push.sh"
     }
   },
@@ -35,6 +32,7 @@
     "@actions/exec": "^1.0.4",
     "@actions/github": "^4.0.0",
     "@octokit/webhooks": "^7.21.0",
+    "@octokit/webhooks-definitions": "^3.61.0",
     "@types/he": "^1.1.1",
     "fast-xml-parser": "^3.17.6",
     "he": "^1.2.0"
