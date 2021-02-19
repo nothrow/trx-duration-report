@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
 import { Results, TrxDataWrapper, UnitTestResult } from './types/types';
-// import {createCheckRun} from './github'
+import {createCheckRun} from './github'
 import { Timespan } from './timespan'
 import {
   getTrxFiles,
@@ -8,6 +8,7 @@ import {
   getConfigValue,
   makeArray
 } from './utils'
+import { formatHistogram, formatStatistics, formatWorstTests } from './markup';
 
 function getUnitTestResult(
   unitTestId: string,
@@ -41,7 +42,7 @@ function processTests(data : TrxDataWrapper[])
         duration: Timespan.parse(testResult?._duration),
         className: test.TestMethod._className,
         testName: test.TestMethod._name,
-        outcome: testResult?._outcome
+        outcome: testResult?._outcome ?? 'undefined'
       });
     }
   }
@@ -51,7 +52,7 @@ function processTests(data : TrxDataWrapper[])
   return rv;
 }
 
-export async function run(): Promise<void> {
+async function run(): Promise<void> {
   try {
     const token = getConfigValue('REPO_TOKEN');
     const trxPath = getConfigValue('TRX_PATH');
@@ -62,14 +63,20 @@ export async function run(): Promise<void> {
     core.info(`Processing ${trxFiles.length} trx files`)
     const trxToJson = await transformAllTrxToJson(trxFiles)
 
-    const tests = processTests(trxToJson);
+    const tests = processTests(trxToJson)
 
-    for (const _ of tests.slice(0, 10)) {
-      core.info(`${_.duration}: ${_.testName}`)
+    const statistics = formatStatistics(tests)
+    const worst10 = formatWorstTests(tests, 10)
+    const histogram = formatHistogram(tests, 50)
+
+    if (!token) {
+      core.info(statistics)
+      core.info(worst10)
+      core.info(histogram)
     }
-
-    core.info(token);
-
+    else {
+      createCheckRun(token, statistics + worst10 + histogram)
+    }
     
   } catch (error) {
     core.setFailed(error.message)

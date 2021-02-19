@@ -38,7 +38,6 @@ export async function createCheckRun(
       output: {
         title: "Unit test duration report",
         summary: `This test run completed at \`${checkTime}\``,
-        // text: reportData.ReportMetaData.TrxJSonString
         text: markupData
       }
     })

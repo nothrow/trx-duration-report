@@ -136,3 +136,11 @@ export interface TrxDataWrapper {
     TrxJSonString: string
   }
 }
+
+export interface TestPerformance
+{
+  duration: number;
+  className: string;
+  testName: string;
+  outcome: string;
+}
