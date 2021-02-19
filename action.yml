@@ -1,0 +1,16 @@
+name: 'trx-duration-report'
+description: 'An action to parse trx reports from a given path and use GitHub status check api to report test duration statistics'
+author: 'Vita Tauer'
+branding:
+  icon: 'info'
+  color: 'green'
+inputs:
+    TRX_PATH:
+      description: 'Path to the directory cntaining trx files'
+      required: true
+    REPO_TOKEN:
+      description: 'Pass in the repository token. This should be generally be secrets.GITHUB_TOKEN. This is used for GitHub checks api'
+      required: true
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
