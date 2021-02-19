@@ -8,7 +8,7 @@ export async function createCheckRun(
 ): Promise<void> {
   try {
     core.info(`Creating PR check`)
-  
+
     const octokit = github.getOctokit(repoToken)
     let git_sha = github.context.sha
 
@@ -36,7 +36,7 @@ export async function createCheckRun(
       status: 'completed',
       conclusion: 'neutral',
       output: {
-        title: "Unit test duration report",
+        title: 'Unit test duration report',
         summary: `This test run completed at \`${checkTime}\``,
         text: markupData
       }

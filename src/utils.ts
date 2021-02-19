@@ -65,8 +65,7 @@ export async function transformTrxToJson(
     if (xmlParser.validate(xmlData.toString()) === true) {
       const jsonString = xmlParser.parse(xmlData, options, true)
       const reportHeaders = getReportHeaders(jsonString)
-      if (!reportHeaders)
-        return trxDataWrapper;
+      if (!reportHeaders) return trxDataWrapper
 
       trxDataWrapper = {
         TrxData: jsonString as TrxData,
@@ -95,11 +94,12 @@ export async function transformAllTrxToJson(
   const transformedTrxReports: TrxDataWrapper[] = []
   for (const trx of trxFiles) {
     try {
-      const trxToJson = await transformTrxToJson(trx);
-      if (trxToJson)
-        transformedTrxReports.push(trxToJson)
+      const trxToJson = await transformTrxToJson(trx)
+      if (trxToJson) transformedTrxReports.push(trxToJson)
     } catch (ex) {
-      throw new Error(`Processing of TRX: ${trx} failed with error: ${ex.message}`)
+      throw new Error(
+        `Processing of TRX: ${trx} failed with error: ${ex.message}`
+      )
     }
   }
 
@@ -109,8 +109,7 @@ export async function transformAllTrxToJson(
 function getReportHeaders(
   data: TrxData
 ): {reportName: string; reportTitle: string} {
-  if (!data.TestRun.TestDefinitions)
-    return null as any;
+  if (!data.TestRun.TestDefinitions) return null as any
 
   let reportTitle = ''
   let reportName = ''
@@ -128,21 +127,19 @@ function getReportHeaders(
   return {reportName, reportTitle}
 }
 
-export function makeArray<T>(items : T | Array<T>) : Array<T>
-{
-  if (Array.isArray(items))
-    return items;
+export function makeArray<T>(items: T | T[]): T[] {
+  if (Array.isArray(items)) return items
 
-  return [items];
+  return [items]
 }
 
-export function getConfigValue(id: string) : string {
-  const coreValue = core.getInput(id);
+export function getConfigValue(id: string): string {
+  const coreValue = core.getInput(id)
   if (!coreValue || coreValue === '') {
-    return process.env[id] ?? coreValue;
+    return process.env[id] ?? coreValue
   }
 
-  return coreValue;
+  return coreValue
 }
 
 function getAssemblyName(unittests: UnitTest[]): string {

@@ -137,10 +137,9 @@ export interface TrxDataWrapper {
   }
 }
 
-export interface TestPerformance
-{
-  duration: number;
-  className: string;
-  testName: string;
-  outcome: string;
+export interface TestPerformance {
+  duration: number
+  className: string
+  testName: string
+  outcome: string
 }
