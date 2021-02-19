@@ -10,6 +10,7 @@
     "format-check": "prettier --check **/*.ts",
     "lint": "eslint src/**/*.ts",
     "lint-fix": "eslint --fix src/**/*.ts",
+    "package": "ncc build --source-map --license licenses.txt",
     "watch": "tsc --watch"
   },
   "repository": {
