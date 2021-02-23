@@ -60,48 +60,56 @@ function getMinMax(arr: number[]): {min: number; max: number} {
   )
 }
 
+export function formatHistogramUrl(url: string): string {
+  return `<details>
+    <summary>Histogram of test speed distribution</summary>
+    <img src="${url}" />
+    </details>`
+}
+
 export function formatHistogram(
   result: TestPerformance[],
   bucketCount: number
 ): string {
-  const header = `<details>
-    <summary>Histogram of test speed distribution</summary>
-    <style>
-        .graph {
-            font-family: sans-serif;
-            height: 500px;
-            width: 800px;
-        }
-        .graph .labels.x-labels {
-            text-anchor: middle;
-        }
-        .graph .labels.y-labels {
-            text-anchor: end;
-        }
-        .graph .grid {
-            stroke: #ccc;
-            stroke-dasharray: 0;
-            stroke-width: 1;
-        }
-        .graph .label-title {
-            font-weight: bold;
-            text-transform: uppercase;
-            font-size: 12px;
-            fill: black;
-        }
-    </style>
-    <svg version="1.2" class="graph">
-        <g class="grid x-grid" id="xGrid">
-            <line x1="90" x2="90" y1="5" y2="371"></line>
-        </g>
-        <g class="grid y-grid" id="yGrid">
-            <line x1="90" x2="705" y1="370" y2="370"></line>
-        </g>
+  const header = `<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <style type="text/css"><![CDATA[
+      body {
+          font-family: sans-serif;
+          height: 500px;
+          width: 800px;
+      }
+      .labels.x-labels {
+          text-anchor: middle;
+      }
+      .labels.y-labels {
+          text-anchor: end;
+      }
+      .grid {
+          stroke: #ccc;
+          stroke-dasharray: 0;
+          stroke-width: 1;
+      }
+      .label-title {
+          font-weight: bold;
+          text-transform: uppercase;
+          font-size: 12px;
+          fill: black;
+      }
+      ]]>
+      </style>
+    </defs>
+    <g class="grid x-grid" id="xGrid">
+        <line x1="90" x2="90" y1="5" y2="371"></line>
+    </g>
+    <g class="grid y-grid" id="yGrid">
+        <line x1="90" x2="705" y1="370" y2="370"></line>
+    </g>
 `
 
-  const footer = `
-    </svg>
-</details>`
+  const footer = `</svg>`
 
   const {min, max} = getMinMax(result.map(x => x.duration))
   const bucketSize = (max - min) / bucketCount

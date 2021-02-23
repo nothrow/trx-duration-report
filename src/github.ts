@@ -1,6 +1,58 @@
 import * as github from '@actions/github'
+import * as artifact from '@actions/artifact'
 import * as core from '@actions/core'
 import * as Webhooks from '@octokit/webhooks'
+import {join, sep} from 'path'
+import {tmpdir} from 'os'
+import * as fs from 'fs'
+import * as uitl from 'util'
+
+export async function createArtifact(
+  repoToken: string,
+  artifactName: string,
+  markupData: string,
+  runId: string,
+  repo: string
+): Promise<string> {
+  try {
+    core.info(`Creating artifact`)
+
+    const artifactClient = artifact.create()
+
+    const tmpDir = tmpdir()
+
+    const mkdtemp = uitl.promisify(fs.mkdtemp)
+    const writeFile = uitl.promisify(fs.writeFile)
+
+    const tempDir = await mkdtemp(`${tmpDir}${sep}`)
+    const fileName = join(tempDir, artifactName)
+
+    core.info(`storing artifact into ${fileName}`)
+
+    await writeFile(fileName, markupData)
+    await artifactClient.uploadArtifact(artifactName, [fileName], tempDir, {})
+
+    const octokit = github.getOctokit(repoToken)
+
+    const allArtifacts = await octokit.request(
+      'GET /repos/{repo}/actions/runs/{run_id}/artifacts',
+      {
+        repo,
+        run_id: runId
+      }
+    )
+
+    for (const art of allArtifacts.data.artifacts) {
+      if (art.name === artifactName) {
+        return art.url
+      }
+    }
+  } catch (error) {
+    core.setFailed(error.message)
+  }
+
+  return 'unknown'
+}
 
 export async function createCheckRun(
   repoToken: string,

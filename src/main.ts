@@ -5,7 +5,7 @@ import {
   TrxDataWrapper,
   UnitTestResult
 } from './types/types'
-import {createCheckRun} from './github'
+import {createArtifact, createCheckRun} from './github'
 import {parseTime} from './timespan'
 import {
   getTrxFiles,
@@ -13,7 +13,12 @@ import {
   getConfigValue,
   makeArray
 } from './utils'
-import {formatHistogram, formatStatistics, formatWorstTests} from './markup'
+import {
+  formatHistogram,
+  formatHistogramUrl,
+  formatStatistics,
+  formatWorstTests
+} from './markup'
 
 function getUnitTestResult(
   unitTestId: string,
@@ -61,6 +66,9 @@ async function run(): Promise<void> {
     const token = getConfigValue('REPO_TOKEN')
     const trxPath = getConfigValue('TRX_PATH')
 
+    const runId = getConfigValue('GITHUB_RUN_ID')
+    const repo = getConfigValue('GITHUB_REPOSITORY')
+
     core.info(`Finding Trx files in: ${trxPath}`)
     const trxFiles = await getTrxFiles(trxPath)
 
@@ -78,7 +86,15 @@ async function run(): Promise<void> {
       core.info(worst10)
       core.info(histogram)
     } else {
-      createCheckRun(token, statistics + worst10 + histogram)
+      const histogramUrl = await createArtifact(
+        token,
+        'trx-duration-report-histogram.svg',
+        histogram,
+        runId,
+        repo
+      )
+      const histogramHtml = formatHistogramUrl(histogramUrl)
+      await createCheckRun(token, statistics + worst10 + histogramHtml)
     }
   } catch (error) {
     core.setFailed(error.message)
